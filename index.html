@@ -6,12 +6,12 @@
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Liste de Course" />
-  <title>La Liste de Course</title>
+  <meta name="apple-mobile-web-app-title" content="Courses" />
+  <title>La Liste de Courses</title>
   <!-- Favicon emoji -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>" />
-  <!-- Icône iPhone (180x180) -->
-  <link rel="apple-touch-icon" href="logo.png" />
+  <!-- Icône iPhone home screen (180x180) -->
+  <link rel="apple-touch-icon" sizes="180x180" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
@@ -46,7 +46,7 @@
 
   <!-- HEADER -->
   <header>
-    <h1>🛒 La Liste de Course</h1>
+    <h1>🛒 La Liste de Courses</h1>
   </header>
 
   <!-- TABS NAV -->
@@ -78,8 +78,10 @@
     <section id="tab-carte" class="tab-content">
       <p class="tab-subtitle">Votre carte fidélité Super U.</p>
       <div class="carte-container">
-        <img src="carte.png" alt="Carte U" class="carte-img" onerror="this.style.display='none'; document.getElementById('carte-placeholder').style.display='flex';" />
-        <div id="carte-placeholder" class="carte-placeholder">
+        <img src="carte.png" alt="Carte U" class="carte-img"
+          onload="document.getElementById('carte-placeholder').style.display='none';"
+          onerror="this.style.display='none'; document.getElementById('carte-placeholder').style.display='flex';" />
+        <div id="carte-placeholder" class="carte-placeholder" style="display:none;">
           <div class="carte-placeholder-inner">
             <span class="carte-icon">💳</span>
             <p>Ajoutez votre image de carte ici :</p>
