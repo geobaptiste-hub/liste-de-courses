@@ -8,11 +8,41 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Liste de Course" />
   <title>La Liste de Course</title>
+  <!-- Favicon emoji -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>" />
+  <!-- Icône iPhone (180x180) -->
+  <link rel="apple-touch-icon" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
+  <style>
+    #splash-screen {
+      position: fixed;
+      inset: 0;
+      background: #1b5e20;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity 0.5s ease;
+    }
+    #splash-screen.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #splash-screen img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+  </style>
 </head>
 <body>
+
+  <!-- ÉCRAN DE CHARGEMENT -->
+  <div id="splash-screen">
+    <img src="ecran chargement.png" alt="Chargement…" />
+  </div>
 
   <!-- HEADER -->
   <header>
@@ -48,12 +78,12 @@
     <section id="tab-carte" class="tab-content">
       <p class="tab-subtitle">Votre carte fidélité Super U.</p>
       <div class="carte-container">
-        <img src="Carte U/carte.png" alt="Carte U" class="carte-img" onerror="this.style.display='none'; document.getElementById('carte-placeholder').style.display='flex';" />
+        <img src="carte.png" alt="Carte U" class="carte-img" onerror="this.style.display='none'; document.getElementById('carte-placeholder').style.display='flex';" />
         <div id="carte-placeholder" class="carte-placeholder">
           <div class="carte-placeholder-inner">
             <span class="carte-icon">💳</span>
             <p>Ajoutez votre image de carte ici :</p>
-            <code>La liste de course / Carte U / carte.png</code>
+            <code>carte.png</code> (à la racine du dépôt)
             <p class="carte-note">Formats acceptés : PNG, JPG, JPEG, WEBP</p>
           </div>
         </div>
@@ -110,5 +140,15 @@
   </main>
 
   <script src="app.js"></script>
+  <script>
+    // Écran de chargement : 2 secondes puis fondu
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        var splash = document.getElementById('splash-screen');
+        splash.classList.add('fade-out');
+        setTimeout(function() { splash.remove(); }, 500);
+      }, 2000);
+    });
+  </script>
 </body>
 </html>
