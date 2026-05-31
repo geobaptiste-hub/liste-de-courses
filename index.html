@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Liste de Course" />
+  <title>La Liste de Course</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <h1>🛒 La Liste de Course</h1>
+  </header>
+
+  <!-- TABS NAV -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="validation">✅ Courses</button>
+    <button class="tab-btn" data-tab="liste">📝 Liste</button>
+    <button class="tab-btn" data-tab="carte">💳 Carte U</button>
+    <button class="tab-btn" data-tab="heures">⏰ Paniers</button>
+    <button class="tab-btn" data-tab="reserves">📦 Réserves</button>
+    <button class="tab-btn" data-tab="recettes">🍳 Recettes</button>
+  </nav>
+
+  <!-- CONTENU DES ONGLETS -->
+  <main>
+
+    <!-- ONGLET 1 : VALIDATION -->
+    <section id="tab-validation" class="tab-content active">
+      <p class="tab-subtitle">Cochez les produits au fur et à mesure de vos courses.</p>
+      <div id="validation-stores"></div>
+    </section>
+
+    <!-- ONGLET 2 : LISTE -->
+    <section id="tab-liste" class="tab-content">
+      <p class="tab-subtitle">Ajoutez vos produits par magasin.</p>
+      <div id="liste-stores"></div>
+    </section>
+
+    <!-- ONGLET 3 : CARTE U -->
+    <section id="tab-carte" class="tab-content">
+      <p class="tab-subtitle">Votre carte fidélité Super U.</p>
+      <div class="carte-container">
+        <img src="Carte U/carte.png" alt="Carte U" class="carte-img" onerror="this.style.display='none'; document.getElementById('carte-placeholder').style.display='flex';" />
+        <div id="carte-placeholder" class="carte-placeholder">
+          <div class="carte-placeholder-inner">
+            <span class="carte-icon">💳</span>
+            <p>Ajoutez votre image de carte ici :</p>
+            <code>La liste de course / Carte U / carte.png</code>
+            <p class="carte-note">Formats acceptés : PNG, JPG, JPEG, WEBP</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ONGLET 4 : HEURE PANIERS -->
+    <section id="tab-heures" class="tab-content">
+      <p class="tab-subtitle">Programmez un rappel pour vos paniers.</p>
+      <div class="alarm-card">
+        <h3>⏰ Rappel hebdomadaire</h3>
+        <div class="alarm-row">
+          <label>Jour</label>
+          <select id="alarm-day">
+            <option value="1">Lundi</option>
+            <option value="2">Mardi</option>
+            <option value="3">Mercredi</option>
+            <option value="4">Jeudi</option>
+            <option value="5" selected>Vendredi</option>
+            <option value="6">Samedi</option>
+            <option value="0">Dimanche</option>
+          </select>
+        </div>
+        <div class="alarm-row">
+          <label>Heure</label>
+          <input type="time" id="alarm-time" value="16:00" />
+        </div>
+        <button class="btn-alarm" id="alarm-btn" onclick="toggleAlarm()">🔔 Activer le rappel</button>
+        <p class="alarm-status" id="alarm-status"></p>
+        <div class="alarm-info">
+          <p>⚠️ Pour recevoir des notifications, autorisez les dans votre navigateur. Le rappel fonctionne uniquement si la page est ouverte.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ONGLET 5 : RÉSERVES -->
+    <section id="tab-reserves" class="tab-content">
+      <div class="empty-tab">
+        <span>📦</span>
+        <p>Section Réserves</p>
+        <small>Bientôt disponible</small>
+      </div>
+    </section>
+
+    <!-- ONGLET 6 : RECETTES -->
+    <section id="tab-recettes" class="tab-content">
+      <div class="empty-tab">
+        <span>🍳</span>
+        <p>Section Recettes</p>
+        <small>Bientôt disponible</small>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
