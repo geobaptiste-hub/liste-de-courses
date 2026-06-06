@@ -8,177 +8,465 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Courses" />
   <title>La Liste de Courses</title>
-  <!-- Favicon emoji -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📝</text></svg>" />
-  <!-- Icône iPhone home screen (180x180) -->
   <link rel="apple-touch-icon" sizes="180x180" href="logo.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css" />
-  <style>
-    #splash-screen {
-      position: fixed;
-      inset: 0;
-      background: #1b5e20;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      transition: opacity 0.5s ease;
-    }
-    #splash-screen.fade-out {
-      opacity: 0;
-      pointer-events: none;
-    }
-    #splash-screen img {
-      max-width: 90%;
-      max-height: 90%;
-      object-fit: contain;
-    }
-  </style>
+<style>
+:root {
+  --primary: #2e7d32;
+  --primary-light: #4caf50;
+  --primary-dark: #1b5e20;
+  --accent: #ff6f00;
+  --bg: #f1f8e9;
+  --bg-card: #ffffff;
+  --text: #1a2e1a;
+  --text-light: #5a7a5a;
+  --border: #c8e6c9;
+  --shadow: 0 2px 12px rgba(46,125,50,0.10);
+  --shadow-strong: 0 4px 24px rgba(46,125,50,0.18);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --tab-height: 64px;
+  --header-height: 56px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; font-family: 'Nunito', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+/* SPLASH */
+#splash-screen { position: fixed; inset: 0; background: #1b5e20; display: flex; align-items: center; justify-content: center; z-index: 9999; transition: opacity 0.5s ease; }
+#splash-screen.fade-out { opacity: 0; pointer-events: none; }
+#splash-screen img { max-width: 90%; max-height: 90%; object-fit: contain; }
+
+/* HEADER */
+header { position: fixed; top: 0; left: 0; right: 0; height: var(--header-height); background: linear-gradient(135deg, var(--primary-dark), var(--primary)); display: flex; align-items: center; justify-content: center; z-index: 100; box-shadow: 0 2px 12px rgba(0,0,0,0.2); }
+header h1 { font-family: 'Pacifico', cursive; font-size: 1.35rem; color: #fff; }
+
+/* TABS */
+.tab-nav { position: fixed; top: var(--header-height); left: 0; right: 0; height: var(--tab-height); background: #fff; display: flex; overflow-x: auto; overflow-y: hidden; z-index: 99; border-bottom: 2px solid var(--border); scrollbar-width: none; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-btn { flex: 0 0 auto; padding: 0 14px; height: 100%; background: none; border: none; font-family: 'Nunito', sans-serif; font-size: 0.78rem; font-weight: 700; color: var(--text-light); cursor: pointer; white-space: nowrap; border-bottom: 3px solid transparent; position: relative; top: 2px; transition: all 0.2s; }
+.tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+/* MAIN */
+main { margin-top: calc(var(--header-height) + var(--tab-height)); padding: 16px 12px 32px; }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+.tab-subtitle { font-size: 0.82rem; color: var(--text-light); margin-bottom: 14px; text-align: center; }
+
+/* STORE BLOCK */
+.store-block { background: var(--bg-card); border-radius: var(--radius); margin-bottom: 14px; box-shadow: var(--shadow); overflow: hidden; border: 1.5px solid var(--border); }
+.store-block[data-store="superu"] .store-header { border-left: 4px solid #e53935; }
+.store-block[data-store="lidl"]   .store-header { border-left: 4px solid #1565c0; }
+.store-block[data-store="action"] .store-header { border-left: 4px solid #e65100; }
+.store-block[data-store="autre"]  .store-header { border-left: 4px solid #6a1b9a; }
+.store-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; user-select: none; }
+.store-title { display: flex; align-items: center; gap: 10px; font-size: 1rem; font-weight: 800; }
+.store-emoji { font-size: 1.3rem; }
+.store-badge { background: var(--primary-light); color: #fff; font-size: 0.72rem; font-weight: 800; padding: 2px 8px; border-radius: 20px; }
+.store-badge.zero { background: #ddd; color: #999; }
+.store-chevron { font-size: 1rem; color: var(--text-light); transition: transform 0.25s; }
+.store-block.collapsed .store-chevron { transform: rotate(-90deg); }
+.store-body { overflow: hidden; max-height: 2000px; transition: max-height 0.3s ease; }
+.store-block.collapsed .store-body { max-height: 0; }
+
+/* ITEMS VALIDATION */
+.item-list { padding: 0 12px 8px; }
+.item-row { display: flex; align-items: center; gap: 12px; padding: 11px 4px; border-bottom: 1px solid #f0f0f0; cursor: pointer; border-radius: 8px; }
+.item-row:last-child { border-bottom: none; }
+.item-check { width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.2s; background: #fff; }
+.item-row.checked .item-check { background: var(--primary-light); border-color: var(--primary); }
+.item-check-icon { font-size: 0.85rem; opacity: 0; transition: opacity 0.2s; }
+.item-row.checked .item-check-icon { opacity: 1; }
+.item-name { flex: 1; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; }
+.item-row.checked .item-name { text-decoration: line-through; color: #aaa; }
+.empty-store { text-align: center; padding: 20px; color: #bbb; font-size: 0.85rem; font-style: italic; }
+
+/* FOOTER VALIDER */
+.store-footer { padding: 10px 12px 14px; border-top: 1px solid var(--border); }
+.btn-validate-store { width: 100%; padding: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; border: none; border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 0.9rem; font-weight: 800; cursor: pointer; }
+.btn-validate-store:disabled { background: #ddd; color: #aaa; cursor: not-allowed; }
+
+/* LISTE */
+.add-item-row { display: flex; gap: 8px; padding: 8px 12px 12px; }
+.add-item-input { flex: 1; padding: 10px 14px; border: 2px solid var(--border); border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-size: 0.95rem; font-weight: 600; outline: none; background: var(--bg); color: var(--text); }
+.add-item-input:focus { border-color: var(--primary-light); }
+.btn-add { width: 44px; height: 44px; background: var(--primary); color: #fff; border: none; border-radius: var(--radius-sm); font-size: 1.5rem; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.liste-item-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 12px; border-bottom: 1px solid #f0f0f0; gap: 10px; }
+.liste-item-row:last-child { border-bottom: none; }
+.liste-item-name { flex: 1; font-size: 0.95rem; font-weight: 600; }
+.btn-remove { width: 28px; height: 28px; background: #ffebee; color: #e53935; border: none; border-radius: 50%; font-size: 1.1rem; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* CARTE U */
+.carte-container { display: flex; flex-direction: column; align-items: center; padding: 10px 0; width: 100%; }
+.carte-img { width: 100%; max-width: 100%; height: auto; border-radius: var(--radius); box-shadow: var(--shadow-strong); display: block; }
+.carte-placeholder { display: flex; align-items: center; justify-content: center; background: var(--bg-card); border: 2px dashed var(--border); border-radius: var(--radius); width: 100%; padding: 40px 20px; }
+.carte-placeholder-inner { text-align: center; color: var(--text-light); }
+.carte-icon { font-size: 3rem; display: block; margin-bottom: 12px; }
+.carte-placeholder p { font-size: 0.9rem; margin-bottom: 8px; }
+.carte-placeholder code { display: inline-block; background: var(--bg); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.78rem; color: var(--primary-dark); margin-bottom: 8px; }
+.carte-note { font-size: 0.75rem; color: #aaa; }
+
+/* PANIERS */
+.paniers-card { background: var(--bg-card); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); border: 1.5px solid var(--border); }
+.paniers-header { background: linear-gradient(135deg, var(--primary-dark), var(--primary)); display: flex; align-items: center; gap: 14px; padding: 18px; }
+.paniers-icon { font-size: 2.2rem; }
+.paniers-header h3 { color: #fff; font-size: 1.15rem; font-weight: 900; margin-bottom: 2px; }
+.paniers-tagline { color: rgba(255,255,255,0.8); font-size: 0.82rem; font-weight: 600; }
+.paniers-section { padding: 16px 18px; border-bottom: 1px solid var(--border); }
+.paniers-section:last-child { border-bottom: none; }
+.paniers-section h4 { font-size: 0.82rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-light); margin-bottom: 12px; }
+.horaire-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #eee; }
+.horaire-row:last-of-type { border-bottom: none; }
+.horaire-day { font-weight: 800; font-size: 0.95rem; color: var(--primary-dark); }
+.horaire-time { font-size: 0.95rem; font-weight: 700; background: var(--bg); padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); }
+.horaire-note { font-size: 0.8rem; color: var(--text-light); margin-top: 10px; font-style: italic; }
+.paniers-info { font-size: 0.9rem; color: var(--text); margin-bottom: 12px; line-height: 1.5; }
+.paniers-btn-link { display: block; text-align: center; padding: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; text-decoration: none; border-radius: var(--radius-sm); font-weight: 800; font-size: 0.9rem; }
+.paniers-contact-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #f0f0f0; text-decoration: none; color: var(--text); font-size: 0.9rem; font-weight: 600; cursor: pointer; width: 100%; background: none; border-left: none; border-right: none; border-top: none; font-family: 'Nunito', sans-serif; text-align: left; flex-wrap: wrap; }
+.paniers-contact-row:last-child { border-bottom: none; }
+.paniers-contact-row span:first-child { font-size: 1.2rem; flex-shrink: 0; }
+.copy-hint { font-size: 0.7rem; color: #bbb; font-weight: 600; width: 100%; padding-left: 34px; margin-top: -4px; }
+
+/* EMPTY TAB */
+.empty-tab { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; color: #bbb; text-align: center; gap: 10px; }
+.empty-tab span { font-size: 3rem; }
+.empty-tab p { font-size: 1.1rem; font-weight: 700; color: #ccc; }
+.empty-tab small { font-size: 0.8rem; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--primary-dark); color: #fff; padding: 12px 24px; border-radius: 30px; font-size: 0.88rem; font-weight: 700; z-index: 999; box-shadow: 0 4px 20px rgba(0,0,0,0.25); transition: transform 0.3s ease; white-space: nowrap; }
+.toast.show { transform: translateX(-50%) translateY(0); }
+</style>
 </head>
 <body>
 
-  <!-- ÉCRAN DE CHARGEMENT -->
-  <div id="splash-screen">
-    <img src="ecran chargement.png" alt="Chargement…" />
-  </div>
+<div id="splash-screen">
+  <img src="ecran chargement.png" alt="Chargement…" />
+</div>
 
-  <!-- HEADER -->
-  <header>
-    <h1>🛒 La Liste de Courses</h1>
-  </header>
+<header><h1>🛒 La Liste de Courses</h1></header>
 
-  <!-- TABS NAV -->
-  <nav class="tab-nav">
-    <button class="tab-btn active" data-tab="validation">✅ Courses</button>
-    <button class="tab-btn" data-tab="liste">📝 Liste</button>
-    <button class="tab-btn" data-tab="carte">💳 Carte U</button>
-    <button class="tab-btn" data-tab="heures">⏰ Paniers</button>
-    <button class="tab-btn" data-tab="reserves">📦 Réserves</button>
-    <button class="tab-btn" data-tab="recettes">🍳 Recettes</button>
-  </nav>
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="validation">✅ Courses</button>
+  <button class="tab-btn" data-tab="liste">📝 Liste</button>
+  <button class="tab-btn" data-tab="carte">💳 Carte U</button>
+  <button class="tab-btn" data-tab="heures">⏰ Paniers</button>
+  <button class="tab-btn" data-tab="reserves">📦 Réserves</button>
+  <button class="tab-btn" data-tab="recettes">🍳 Recettes</button>
+</nav>
 
-  <!-- CONTENU DES ONGLETS -->
-  <main>
+<main>
 
-    <!-- ONGLET 1 : VALIDATION -->
-    <section id="tab-validation" class="tab-content active">
-      <p class="tab-subtitle">Cochez les produits au fur et à mesure de vos courses.</p>
-      <div id="validation-stores"></div>
-    </section>
+  <section id="tab-validation" class="tab-content active">
+    <p class="tab-subtitle">Cochez les produits au fur et à mesure de vos courses.</p>
+    <div id="validation-stores"></div>
+  </section>
 
-    <!-- ONGLET 2 : LISTE -->
-    <section id="tab-liste" class="tab-content">
-      <p class="tab-subtitle">Ajoutez vos produits par magasin.</p>
-      <div id="liste-stores"></div>
-    </section>
+  <section id="tab-liste" class="tab-content">
+    <p class="tab-subtitle">Ajoutez vos produits par magasin.</p>
+    <div id="liste-stores"></div>
+  </section>
 
-    <!-- ONGLET 3 : CARTE U -->
-    <section id="tab-carte" class="tab-content">
-      <p class="tab-subtitle">Votre carte fidélité Super U.</p>
-      <div class="carte-container">
-        <img src="carte.png" alt="Carte U" class="carte-img"
-          onload="document.getElementById('carte-placeholder').style.display='none';"
-          onerror="this.style.display='none'; document.getElementById('carte-placeholder').style.display='flex';" />
-        <div id="carte-placeholder" class="carte-placeholder" style="display:none;">
-          <div class="carte-placeholder-inner">
-            <span class="carte-icon">💳</span>
-            <p>Ajoutez votre image de carte ici :</p>
-            <code>carte.png</code> (à la racine du dépôt)
-            <p class="carte-note">Formats acceptés : PNG, JPG, JPEG, WEBP</p>
-          </div>
+  <section id="tab-carte" class="tab-content">
+    <p class="tab-subtitle">Votre carte fidélité Super U.</p>
+    <div class="carte-container">
+      <img src="carte.png" alt="Carte U" class="carte-img"
+        onload="document.getElementById('carte-placeholder').style.display='none';"
+        onerror="this.style.display='none'; document.getElementById('carte-placeholder').style.display='flex';" />
+      <div id="carte-placeholder" class="carte-placeholder" style="display:none;">
+        <div class="carte-placeholder-inner">
+          <span class="carte-icon">💳</span>
+          <p>Ajoutez votre image de carte ici :</p>
+          <code>carte.png</code>
+          <p class="carte-note">Formats acceptés : PNG, JPG, JPEG, WEBP</p>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ONGLET 4 : HEURE PANIERS -->
-    <section id="tab-heures" class="tab-content">
-      <p class="tab-subtitle">Horaires et informations de votre drive.</p>
-
-      <div class="paniers-card">
-        <div class="paniers-header">
-          <span class="paniers-icon">🌿</span>
-          <div>
-            <h3>Jardin des Puys</h3>
-            <p class="paniers-tagline">Drive &amp; Marché</p>
-          </div>
+  <section id="tab-heures" class="tab-content">
+    <p class="tab-subtitle">Horaires et informations de votre drive.</p>
+    <div class="paniers-card">
+      <div class="paniers-header">
+        <span class="paniers-icon">🌿</span>
+        <div>
+          <h3>Jardin des Puys</h3>
+          <p class="paniers-tagline">Drive &amp; Marché</p>
         </div>
-
-        <div class="paniers-section">
-          <h4>📅 Horaires</h4>
-          <div class="horaire-row">
-            <span class="horaire-day">Jeudi</span>
-            <span class="horaire-time">15h00 – 18h00</span>
-          </div>
-          <div class="horaire-row">
-            <span class="horaire-day">Vendredi</span>
-            <span class="horaire-time">12h00 – 16h30</span>
-          </div>
-          <p class="horaire-note">Retirez votre drive ou retrouvez-nous au marché sur place.</p>
+      </div>
+      <div class="paniers-section">
+        <h4>📅 Horaires</h4>
+        <div class="horaire-row">
+          <span class="horaire-day">Jeudi</span>
+          <span class="horaire-time">15h00 – 18h00</span>
         </div>
-
-        <div class="paniers-section">
-          <h4>🛒 Commande en ligne</h4>
-          <p class="paniers-info">Passez commande du <strong>vendredi 12h</strong> au <strong>lundi 12h</strong></p>
-          <a class="paniers-btn-link" href="https://boutique.ouvretaferme.org/drive-jardin-des-puys" target="_blank" rel="noopener">
-            🌐 Accéder à la boutique
-          </a>
+        <div class="horaire-row">
+          <span class="horaire-day">Vendredi</span>
+          <span class="horaire-time">12h00 – 16h30</span>
         </div>
+        <p class="horaire-note">Retirez votre drive ou retrouvez-nous au marché sur place.</p>
+      </div>
+      <div class="paniers-section">
+        <h4>🛒 Commande en ligne</h4>
+        <p class="paniers-info">Passez commande du <strong>vendredi 12h</strong> au <strong>lundi 12h</strong></p>
+        <a class="paniers-btn-link" href="https://boutique.ouvretaferme.org/drive-jardin-des-puys" target="_blank" rel="noopener">
+          🌐 Accéder à la boutique
+        </a>
+      </div>
+      <div class="paniers-section">
+        <h4>📍 Adresse</h4>
+        <a class="paniers-contact-row" href="https://www.google.com/maps/search/20+Rue+de+la+Fontaine,+85700+Pouzauges" target="_blank" rel="noopener">
+          <span>📍</span>
+          <span>20 Rue de la Fontaine, 85700 Pouzauges</span>
+        </a>
+      </div>
+      <div class="paniers-section">
+        <h4>📞 Contact</h4>
+        <a class="paniers-contact-row" href="tel:+33768328695">
+          <span>📞</span>
+          <span>07 68 32 86 95</span>
+        </a>
+        <button class="paniers-contact-row" onclick="copyEmail()">
+          <span>✉️</span>
+          <span>administration@jardindespuys.fr</span>
+          <span class="copy-hint">appuyer pour copier</span>
+        </button>
+      </div>
+    </div>
+  </section>
 
-        <div class="paniers-section">
-          <h4>📍 Adresse</h4>
-          <a class="paniers-contact-row" href="https://www.google.com/maps/search/20+Rue+de+la+Fontaine,+85700+Pouzauges" target="_blank" rel="noopener">
-            <span>📍</span>
-            <span>20 Rue de la Fontaine, 85700 Pouzauges</span>
-          </a>
+  <section id="tab-reserves" class="tab-content">
+    <div class="empty-tab"><span>📦</span><p>Section Réserves</p><small>Bientôt disponible</small></div>
+  </section>
+
+  <section id="tab-recettes" class="tab-content">
+    <div class="empty-tab"><span>🍳</span><p>Section Recettes</p><small>Bientôt disponible</small></div>
+  </section>
+
+</main>
+
+<script>
+// ===== DONNÉES =====
+const STORES = [
+  { id: 'superu', name: 'Super U', emoji: '🔴' },
+  { id: 'lidl',   name: 'Lidl',   emoji: '🔵' },
+  { id: 'action', name: 'Action', emoji: '🟠' },
+  { id: 'autre',  name: 'Autre',  emoji: '🟣' },
+];
+
+let state = {
+  items: {},
+  collapsed: {},
+};
+
+// ===== INIT =====
+function init() {
+  loadState();
+  renderAll();
+}
+
+function saveState() {
+  localStorage.setItem('liste-courses-v3', JSON.stringify(state));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem('liste-courses-v3');
+    if (raw) state = { ...state, ...JSON.parse(raw) };
+  } catch(e) {}
+  STORES.forEach(s => {
+    if (!state.items[s.id]) state.items[s.id] = [];
+    if (!state.collapsed) state.collapsed = {};
+    if (!state.collapsed.validation) state.collapsed.validation = {};
+    if (!state.collapsed.liste) state.collapsed.liste = {};
+  });
+}
+
+function renderAll() {
+  renderValidation();
+  renderListe();
+}
+
+// ===== ONGLET 1 =====
+function renderValidation() {
+  const container = document.getElementById('validation-stores');
+  container.innerHTML = '';
+  STORES.forEach(store => {
+    const items = state.items[store.id] || [];
+    const isCollapsed = state.collapsed.validation[store.id] ?? false;
+    const checkedCount = items.filter(i => i.checked).length;
+    const allChecked = items.length > 0 && checkedCount === items.length;
+    const block = document.createElement('div');
+    block.className = 'store-block' + (isCollapsed ? ' collapsed' : '');
+    block.dataset.store = store.id;
+    block.innerHTML = `
+      <div class="store-header" onclick="toggleCollapse('validation','${store.id}')">
+        <div class="store-title">
+          <span class="store-emoji">${store.emoji}</span>
+          <span>${store.name}</span>
+          <span class="store-badge ${items.length === 0 ? 'zero' : ''}">${checkedCount}/${items.length}</span>
         </div>
-
-        <div class="paniers-section">
-          <h4>📞 Contact</h4>
-          <a class="paniers-contact-row" href="tel:+33768328695">
-            <span>📞</span>
-            <span>07 68 32 86 95</span>
-          </a>
-          <button class="paniers-contact-row copyable" onclick="copyToClipboard('administration@jardindespuys.fr', 'Email copié !')">
-            <span>✉️</span>
-            <span>administration@jardindespuys.fr</span>
-            <span class="copy-hint">appuyer pour copier</span>
+        <span class="store-chevron">▼</span>
+      </div>
+      <div class="store-body">
+        <div class="item-list">
+          ${items.length === 0
+            ? '<p class="empty-store">Aucun produit pour ce magasin.</p>'
+            : items.map(item => `
+              <div class="item-row ${item.checked ? 'checked' : ''}" onclick="toggleItem('${store.id}','${item.id}')">
+                <div class="item-check"><span class="item-check-icon">✓</span></div>
+                <span class="item-name">${escHtml(item.name)}</span>
+              </div>`).join('')}
+        </div>
+        <div class="store-footer">
+          <button class="btn-validate-store" ${!allChecked ? 'disabled' : ''} onclick="validateAndClear('${store.id}')">
+            🗑️ Valider et effacer ${store.name}
           </button>
         </div>
+      </div>`;
+    container.appendChild(block);
+  });
+}
+
+function toggleItem(storeId, itemId) {
+  const item = (state.items[storeId] || []).find(i => i.id === itemId);
+  if (item) { item.checked = !item.checked; saveState(); renderValidation(); }
+}
+
+function validateAndClear(storeId) {
+  const items = state.items[storeId] || [];
+  if (!items.length || !items.every(i => i.checked)) return;
+  const storeName = STORES.find(s => s.id === storeId)?.name || storeId;
+  if (!confirm('Effacer tous les produits de ' + storeName + ' ?')) return;
+  state.items[storeId] = [];
+  saveState();
+  renderAll();
+  showToast('✅ ' + storeName + ' vidé !');
+}
+
+// ===== ONGLET 2 =====
+function renderListe() {
+  const container = document.getElementById('liste-stores');
+  container.innerHTML = '';
+  STORES.forEach(store => {
+    const items = state.items[store.id] || [];
+    const isCollapsed = state.collapsed.liste[store.id] ?? false;
+    const block = document.createElement('div');
+    block.className = 'store-block' + (isCollapsed ? ' collapsed' : '');
+    block.dataset.store = store.id;
+    block.innerHTML = `
+      <div class="store-header" onclick="toggleCollapse('liste','${store.id}')">
+        <div class="store-title">
+          <span class="store-emoji">${store.emoji}</span>
+          <span>${store.name}</span>
+          <span class="store-badge ${items.length === 0 ? 'zero' : ''}">${items.length}</span>
+        </div>
+        <span class="store-chevron">▼</span>
       </div>
-    </section>
+      <div class="store-body">
+        <div class="add-item-row">
+          <input class="add-item-input" type="text" id="input-${store.id}" placeholder="Ajouter un produit…" onkeydown="if(event.key==='Enter')addItem('${store.id}')" autocomplete="off" />
+          <button class="btn-add" onclick="addItem('${store.id}')">+</button>
+        </div>
+        <div class="item-list">
+          ${items.length === 0
+            ? '<p class="empty-store">Aucun produit pour ce magasin.</p>'
+            : items.map(item => `
+              <div class="liste-item-row">
+                <span class="liste-item-name">${escHtml(item.name)}</span>
+                <button class="btn-remove" onclick="removeItem('${store.id}','${item.id}')">−</button>
+              </div>`).join('')}
+        </div>
+      </div>`;
+    container.appendChild(block);
+  });
+}
 
-    <!-- ONGLET 5 : RÉSERVES -->
-    <section id="tab-reserves" class="tab-content">
-      <div class="empty-tab">
-        <span>📦</span>
-        <p>Section Réserves</p>
-        <small>Bientôt disponible</small>
-      </div>
-    </section>
+function addItem(storeId) {
+  const input = document.getElementById('input-' + storeId);
+  const name = input.value.trim();
+  if (!name) return;
+  const newItem = { id: Date.now().toString(36) + Math.random().toString(36).slice(2), name, checked: false };
+  if (!state.items[storeId]) state.items[storeId] = [];
+  state.items[storeId].push(newItem);
+  input.value = '';
+  saveState();
+  renderAll();
+}
 
-    <!-- ONGLET 6 : RECETTES -->
-    <section id="tab-recettes" class="tab-content">
-      <div class="empty-tab">
-        <span>🍳</span>
-        <p>Section Recettes</p>
-        <small>Bientôt disponible</small>
-      </div>
-    </section>
+function removeItem(storeId, itemId) {
+  state.items[storeId] = (state.items[storeId] || []).filter(i => i.id !== itemId);
+  saveState();
+  renderAll();
+}
 
-  </main>
+function toggleCollapse(tab, storeId) {
+  if (!state.collapsed[tab]) state.collapsed[tab] = {};
+  state.collapsed[tab][storeId] = !state.collapsed[tab][storeId];
+  saveState();
+  if (tab === 'validation') renderValidation(); else renderListe();
+}
 
-  <script src="app.js"></script>
-  <script>
-    // Écran de chargement : 2 secondes puis fondu
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        var splash = document.getElementById('splash-screen');
-        splash.classList.add('fade-out');
-        setTimeout(function() { splash.remove(); }, 500);
-      }, 2000);
-    });
-  </script>
+// ===== EMAIL COPY =====
+function copyEmail() {
+  const email = 'administration@jardindespuys.fr';
+  try {
+    navigator.clipboard.writeText(email).then(
+      function() { showToast('📋 Email copié !'); },
+      function() { fallbackCopy(email); }
+    );
+  } catch(e) { fallbackCopy(email); }
+}
+function fallbackCopy(text) {
+  const el = document.createElement('input');
+  el.value = text;
+  el.style.position = 'fixed';
+  el.style.opacity = '0';
+  document.body.appendChild(el);
+  el.focus();
+  el.select();
+  try { document.execCommand('copy'); showToast('📋 Email copié !'); } catch(e) { showToast('✉️ ' + text); }
+  document.body.removeChild(el);
+}
+
+// ===== TABS =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== TOAST =====
+let toastTimeout;
+function showToast(msg) {
+  let t = document.querySelector('.toast');
+  if (!t) { t = document.createElement('div'); t.className = 'toast'; document.body.appendChild(t); }
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ===== SPLASH =====
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    var splash = document.getElementById('splash-screen');
+    if (splash) {
+      splash.classList.add('fade-out');
+      setTimeout(function() { splash.remove(); }, 500);
+    }
+  }, 2000);
+});
+
+init();
+</script>
 </body>
 </html>
