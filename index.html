@@ -94,29 +94,57 @@
 
     <!-- ONGLET 4 : HEURE PANIERS -->
     <section id="tab-heures" class="tab-content">
-      <p class="tab-subtitle">Programmez un rappel pour vos paniers.</p>
-      <div class="alarm-card">
-        <h3>⏰ Rappel hebdomadaire</h3>
-        <div class="alarm-row">
-          <label>Jour</label>
-          <select id="alarm-day">
-            <option value="1">Lundi</option>
-            <option value="2">Mardi</option>
-            <option value="3">Mercredi</option>
-            <option value="4">Jeudi</option>
-            <option value="5" selected>Vendredi</option>
-            <option value="6">Samedi</option>
-            <option value="0">Dimanche</option>
-          </select>
+      <p class="tab-subtitle">Horaires et informations de votre drive.</p>
+
+      <div class="paniers-card">
+        <div class="paniers-header">
+          <span class="paniers-icon">🌿</span>
+          <div>
+            <h3>Jardin des Puys</h3>
+            <p class="paniers-tagline">Drive &amp; Marché</p>
+          </div>
         </div>
-        <div class="alarm-row">
-          <label>Heure</label>
-          <input type="time" id="alarm-time" value="16:00" />
+
+        <div class="paniers-section">
+          <h4>📅 Horaires</h4>
+          <div class="horaire-row">
+            <span class="horaire-day">Jeudi</span>
+            <span class="horaire-time">15h00 – 18h00</span>
+          </div>
+          <div class="horaire-row">
+            <span class="horaire-day">Vendredi</span>
+            <span class="horaire-time">12h00 – 16h30</span>
+          </div>
+          <p class="horaire-note">Retirez votre drive ou retrouvez-nous au marché sur place.</p>
         </div>
-        <button class="btn-alarm" id="alarm-btn" onclick="toggleAlarm()">🔔 Activer le rappel</button>
-        <p class="alarm-status" id="alarm-status"></p>
-        <div class="alarm-info">
-          <p>⚠️ Pour recevoir des notifications, autorisez les dans votre navigateur. Le rappel fonctionne uniquement si la page est ouverte.</p>
+
+        <div class="paniers-section">
+          <h4>🛒 Commande en ligne</h4>
+          <p class="paniers-info">Passez commande du <strong>vendredi 12h</strong> au <strong>lundi 12h</strong></p>
+          <a class="paniers-btn-link" href="https://boutique.ouvretaferme.org/drive-jardin-des-puys" target="_blank" rel="noopener">
+            🌐 Accéder à la boutique
+          </a>
+        </div>
+
+        <div class="paniers-section">
+          <h4>📍 Adresse</h4>
+          <a class="paniers-contact-row" href="https://www.google.com/maps/search/20+Rue+de+la+Fontaine,+85700+Pouzauges" target="_blank" rel="noopener">
+            <span>📍</span>
+            <span>20 Rue de la Fontaine, 85700 Pouzauges</span>
+          </a>
+        </div>
+
+        <div class="paniers-section">
+          <h4>📞 Contact</h4>
+          <a class="paniers-contact-row" href="tel:+33768328695">
+            <span>📞</span>
+            <span>07 68 32 86 95</span>
+          </a>
+          <div class="paniers-contact-row copyable" onclick="copyToClipboard('administration@jardindespuys.fr', 'Email copié !')">
+            <span>✉️</span>
+            <span>administration@jardindespuys.fr</span>
+            <span class="copy-hint">appuyer pour copier</span>
+          </div>
         </div>
       </div>
     </section>
